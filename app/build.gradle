@@ -16,6 +16,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        buildTypes.each {
+
+            it.buildConfigField 'String','APIKEY', '"bc9067a23b0bbc9dc1f7a69186d053d9"'
+        }
     }
 }
 
