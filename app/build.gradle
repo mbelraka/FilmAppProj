@@ -19,6 +19,11 @@ android {
 
         buildTypes.each {
 
+            it.buildConfigField 'String','URL', '"http://api.themoviedb.org/3/discover/movie?"'
+            it.buildConfigField 'String','SortByParameter', '"sort_by"'
+            it.buildConfigField 'String','PopularityParameter', '"popularity.desc"'
+            it.buildConfigField 'String','RateParameter', '"vote_average.desc"'
+            it.buildConfigField 'String','APIParameter', '"api_key"'
             it.buildConfigField 'String','APIKEY', '"bc9067a23b0bbc9dc1f7a69186d053d9"'
         }
     }
