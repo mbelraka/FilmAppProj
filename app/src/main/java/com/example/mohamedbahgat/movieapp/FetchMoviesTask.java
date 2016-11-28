@@ -2,8 +2,13 @@ package com.example.mohamedbahgat.movieapp;
 
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.SystemClock;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -23,8 +28,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void , String[]>{
             HttpURLConnection connection = null;
 
             BufferedReader reader = null;
-
-            String forecaseJsonStr = null;
 
             String url_path = generateURL(strings[0]);
 
@@ -55,13 +58,33 @@ public class FetchMoviesTask extends AsyncTask<String, Void , String[]>{
                 return  null;
             }
 
-            
+            String[] data = getDataFromJSON(stringBuffer.toString());
 
         } catch(Exception e){
+
+            System.out.println("exception" + e.getMessage());
 
         }
 
         return new String[0];
+    }
+
+    protected String[] getDataFromJSON(String jsonString){
+
+        try{
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+            int pageNum = jsonObject.getInt("page");
+            JSONArray itemsArray = jsonObject.getJSONArray("results");
+
+
+        } catch (Exception e){
+
+            System.out.println("exception" + e.getMessage());
+        }
+
+
+        return null;
     }
 
     protected String generateURL(String param){
