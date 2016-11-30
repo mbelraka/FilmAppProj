@@ -1,11 +1,15 @@
 package com.example.mohamedbahgat.movieapp;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+import java.util.List;
 
 /**
  * Created by MohamedBahgat on 2016-11-28.
@@ -14,15 +18,21 @@ import android.widget.TextView;
 public class MovieAdapter extends BaseAdapter {
 
     private Context context;
-    private Movie[] movies;
+    private List<Movie> movies;
 
     public MovieAdapter(Context context){
-        this.setContext(context);
+
+        this.context = context;
     }
 
     @Override
     public int getCount() {
-        return 0;
+
+        if(movies == null){
+            return 0;
+        }
+
+        return movies.size();
     }
 
     @Override
@@ -38,13 +48,23 @@ public class MovieAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
 
-        Movie movie = movies[i];
+        if(view == null){
+
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+            view = layoutInflater.inflate(R.layout.movie_layout, null);
+        }
+
+        Movie movie = movies.get(i);
 
         ImageView movie_poster = (ImageView)view.findViewById(R.id.movie_poster);
-        TextView movie_title = (TextView)view.findViewById(R.id.movie_title);
-        ImageView favourite_btn = (ImageView)view.findViewById(R.id.favourite_btn);
+        //TextView movie_title = (TextView)view.findViewById(R.id.movie_title);
+        //ImageView favourite_btn = (ImageView)view.findViewById(R.id.favourite_btn);
 
-        //movie_poster.setImageResource(movie.get);
+        Picasso.with(context).load(BuildConfig.imageURL + movie.getPoster_path()).into(movie_poster);
+
+        //movie_title.setText(movie.getTitle());
+
+        return view;
     }
 
     public Context getContext() {
@@ -55,59 +75,12 @@ public class MovieAdapter extends BaseAdapter {
         this.context = context;
     }
 
-    public Movie[] getMovies() {
+    public List<Movie> getMovies() {
         return movies;
     }
 
-    public void setMovies(Movie[] movies) {
+    public void setMovies(List<Movie> movies) {
         this.movies = movies;
     }
 
-    public class Movie{
-
-        private String poster_path;
-        private String title;
-        private double popularity;
-        private double rating;
-
-        public Movie(String poster_path, String title, double popularity, double rating){
-
-            this.title = title;
-            this.poster_path = poster_path;
-            this.popularity = popularity;
-            this.rating = rating;
-        }
-
-        public String getPoster_path() {
-            return poster_path;
-        }
-
-        public void setPoster_path(String poster_path) {
-            this.poster_path = poster_path;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public double getPopularity() {
-            return popularity;
-        }
-
-        public void setPopularity(double popularity) {
-            this.popularity = popularity;
-        }
-
-        public double getRating() {
-            return rating;
-        }
-
-        public void setRating(double rating) {
-            this.rating = rating;
-        }
-    }
 }
