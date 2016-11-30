@@ -8,12 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -126,10 +123,12 @@ public class PortraitFragment extends Fragment {
                     JSONObject movieJson = itemsArray.getJSONObject(i);
                     String title = movieJson.getString("original_title");
                     String poster_path = movieJson.getString("poster_path");
+                    String overview = movieJson.getString("overview");
+                    String releaseDate = movieJson.getString("release_date");
                     double popularity = movieJson.getDouble("popularity");
                     double rating = movieJson.getDouble("vote_average");
 
-                    Movie movie = new Movie(title, poster_path, popularity, rating);
+                    Movie movie = new Movie(title, poster_path, overview, releaseDate, popularity, rating);
 
                     movies.add(movie);
                 }

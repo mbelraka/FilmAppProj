@@ -6,15 +6,20 @@ package com.example.mohamedbahgat.movieapp;
 
 public class Movie{
 
-    private String poster_path;
     private String title;
+    private String poster_path;
+    private String overview;
+    private String releaseDate;
     private double popularity;
     private double rating;
 
-    public Movie(String title, String poster_path, double popularity, double rating){
+
+    public Movie(String title, String poster_path, String overview, String releaseDate, double popularity, double rating){
 
         this.title = title;
         this.poster_path = poster_path;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
         this.popularity = popularity;
         this.rating = rating;
     }
@@ -49,5 +54,21 @@ public class Movie{
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 }
