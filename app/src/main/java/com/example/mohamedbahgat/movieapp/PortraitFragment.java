@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -43,6 +47,28 @@ public class PortraitFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.portrait_fragment_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == R.id.popularity_option){
+            new FetchMoviesTask().execute(BuildConfig.PopularityParameter, "1");
+            return true;
+        }
+        else if(id == R.id.rating_option){
+            new FetchMoviesTask().execute(BuildConfig.RateParameter, "1");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.main_fragment, container, false);
@@ -50,20 +76,24 @@ public class PortraitFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Movie movie = movieAdapter.getMovies().get(i);
-                Intent intent = new Intent(getActivity(), MovieActivity.class);
-                intent.putExtra(Intent.EXTRA_TITLE, movie.getTitle());
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("movie", movie);
-                intent.putExtra("movie", bundle);
-                startActivity(intent);
+                try{
+                    Movie movie = movieAdapter.getMovies().get(i);
+                    Intent intent = new Intent(getActivity(), MovieActivity.class);
+                    intent.putExtra(Intent.EXTRA_TITLE, movie.getTitle());
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("movie", movie);
+                    intent.putExtra("movie", bundle);
+                    startActivity(intent);
+                }catch (Exception e){
+                    System.out.println("exception in listener" + e.getMessage());
+                }
             }
         });
 
         movieAdapter = new MovieAdapter(this.getContext());
 
         FetchMoviesTask fetchTask = new FetchMoviesTask();
-        fetchTask.execute("popularity", "1");
+        fetchTask.execute(BuildConfig.PopularityParameter, "1");
 
         gridView.setAdapter(movieAdapter);
 
@@ -163,8 +193,7 @@ public class PortraitFragment extends Fragment {
             try{
 
                 Uri builder = Uri.parse(BuildConfig.URL).buildUpon().
-                        appendQueryParameter(BuildConfig.SortByParameter,
-                                (param.equals("popularity")? BuildConfig.PopularityParameter : BuildConfig.RateParameter)).
+                        appendQueryParameter(BuildConfig.SortByParameter, param).
                         appendQueryParameter(BuildConfig.APIParameter, BuildConfig.APIKEY).build();
 
                 return builder.toString();
@@ -178,7 +207,6 @@ public class PortraitFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Movie> movies) {
-
             movieAdapter.setMovies(movies);
             movieAdapter.notifyDataSetChanged();
         }
