@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import java.util.List;
@@ -51,7 +50,7 @@ public class MovieAdapter extends BaseAdapter {
         if(view == null){
 
             LayoutInflater layoutInflater = LayoutInflater.from(context);
-            view = layoutInflater.inflate(R.layout.movie_layout, null);
+            view = layoutInflater.inflate(R.layout.movie_item_layout, null);
         }
 
         Movie movie = movies.get(i);

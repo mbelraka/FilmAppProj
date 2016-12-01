@@ -1,5 +1,6 @@
 package com.example.mohamedbahgat.movieapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,6 +47,18 @@ public class PortraitFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.main_fragment, container, false);
         gridView = (GridView) rootView.findViewById(R.id.gridView);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Movie movie = movieAdapter.getMovies().get(i);
+                Intent intent = new Intent(getActivity(), MovieActivity.class);
+                intent.putExtra(Intent.EXTRA_TITLE, movie.getTitle());
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("movie", movie);
+                intent.putExtra("movie", bundle);
+                startActivity(intent);
+            }
+        });
 
         movieAdapter = new MovieAdapter(this.getContext());
 
