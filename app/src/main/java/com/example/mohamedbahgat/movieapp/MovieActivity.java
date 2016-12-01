@@ -17,13 +17,15 @@ public class MovieActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
-        Intent intent = this.getIntent();
+        setTitle(BuildConfig.BaseTitle + " - movie info");
+
+        /*Intent intent = this.getIntent();
 
         if(intent != null && intent.hasExtra(Intent.EXTRA_TITLE)){
 
             String title = intent.getStringExtra(Intent.EXTRA_TITLE);
             setTitle(title);
-        }
+        }*/
 
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().add(R.id.movie_info_container, new MovieFragment()).commit();
