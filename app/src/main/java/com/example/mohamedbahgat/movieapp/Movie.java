@@ -76,6 +76,8 @@ public class Movie implements Parcelable{
         return rating;
     }
 
+    public String getRatingString(){ return rating + " / 10";}
+
     public void setRating(double rating) {
         this.rating = rating;
     }
