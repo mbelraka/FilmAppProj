@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.example.mohamedbahgat.movieapp.models.Movie;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -58,7 +59,6 @@ public class MovieAdapter extends BaseAdapter {
         ImageView movie_poster = (ImageView)view.findViewById(R.id.movie_poster);
         //TextView movie_title = (TextView)view.findViewById(R.id.movie_title);
         //ImageView favourite_btn = (ImageView)view.findViewById(R.id.favourite_btn);
-
         Picasso.with(context).load(BuildConfig.imageURL + movie.getPoster_path()).into(movie_poster);
 
         //movie_title.setText(movie.getTitle());
