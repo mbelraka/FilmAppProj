@@ -83,6 +83,7 @@ public class PortraitFragment extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putParcelable("movie", movie);
                     intent.putExtra("movie", bundle);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                     startActivity(intent);
                 }catch (Exception e){
                     System.out.println("exception in listener" + e.getMessage());
@@ -165,6 +166,7 @@ public class PortraitFragment extends Fragment {
                 for(int i = 0; i < itemsArray.length(); i++){
 
                     JSONObject movieJson = itemsArray.getJSONObject(i);
+                    String id = movieJson.getString("id");
                     String title = movieJson.getString("original_title");
                     String poster_path = movieJson.getString("poster_path");
                     String overview = movieJson.getString("overview");
@@ -172,7 +174,7 @@ public class PortraitFragment extends Fragment {
                     double popularity = movieJson.getDouble("popularity");
                     double rating = movieJson.getDouble("vote_average");
 
-                    Movie movie = new Movie(title, poster_path, overview, releaseDate, popularity, rating);
+                    Movie movie = new Movie(id, title, poster_path, overview, releaseDate, popularity, rating);
 
                     movies.add(movie);
                 }
