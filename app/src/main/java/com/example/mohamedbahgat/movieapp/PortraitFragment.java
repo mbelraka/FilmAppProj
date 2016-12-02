@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import com.example.mohamedbahgat.movieapp.models.Movie;
+import com.example.mohamedbahgat.movieapp.models.Review;
+import com.example.mohamedbahgat.movieapp.models.Trailer;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -24,7 +27,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by MohamedBahgat on 2016-11-25.
@@ -108,42 +110,17 @@ public class PortraitFragment extends Fragment {
 
             try{
 
-                HttpURLConnection connection = null;
+                String link = generateURL(strings[0], Integer.parseInt(strings[1]));
 
-                BufferedReader reader = null;
+                String data = getData(link);
 
-                String url_path = generateURL(strings[0], Integer.parseInt(strings[1]));
-
-                URL url = new URL(url_path);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
-
-                InputStream inputStream = connection.getInputStream();
-
-                if(inputStream == null){
-
+                if(data == null){
                     return null;
                 }
 
-                reader = new BufferedReader(new InputStreamReader(inputStream));
+                List<Movie> dataItems = getDataFromJSON(data);
 
-                StringBuffer stringBuffer = new StringBuffer();
-                String line;
-
-                while ((line = reader.readLine()) != null){
-
-                    stringBuffer.append(line + "\n");
-                }
-
-                if(stringBuffer.length() == 0){
-                    return  null;
-                }
-
-                List<Movie> data = getDataFromJSON(stringBuffer.toString());
-
-                return data;
+                return dataItems;
 
             } catch(Exception e){
 
@@ -175,6 +152,8 @@ public class PortraitFragment extends Fragment {
                     double rating = movieJson.getDouble("vote_average");
 
                     Movie movie = new Movie(id, title, poster_path, overview, releaseDate, popularity, rating);
+                    movie.setTrailers(getTrailers(movie.getId()));
+                    movie.setReviews(getReviews(movie.getId()));
 
                     movies.add(movie);
                 }
@@ -186,6 +165,137 @@ public class PortraitFragment extends Fragment {
                 System.out.println("exception" + e.getMessage());
             }
 
+
+            return null;
+        }
+
+        protected List<Trailer> getTrailers(String movieId){
+
+            try{
+
+                String trailers_url = Uri.parse(BuildConfig.ParamsBaseURL + movieId + "/videos?").buildUpon()
+                        .appendQueryParameter(BuildConfig.APIParameter, BuildConfig.APIKEY).build().toString();
+
+                String trailers_data = getData(trailers_url);
+
+                if(trailers_data == null){
+                    return null;
+                }
+
+                JSONObject jsonObject = new JSONObject(trailers_data);
+                JSONArray itemsArray = jsonObject.getJSONArray("results");
+                List<Trailer> trailers = new ArrayList<Trailer>();
+
+                for(int i = 0; i < itemsArray.length(); i++){
+
+                    JSONObject trailerJson = itemsArray.getJSONObject(i);
+
+                    String type = trailerJson.getString("type");
+
+                    if(!type.equals("Trailer")){
+                        continue;
+                    }
+
+                    String name = trailerJson.getString("name");
+                    String key = trailerJson.getString("key");
+                    key = Uri.parse(BuildConfig.trailerBaseURL).buildUpon().appendQueryParameter("v", key).build().toString();
+
+                    Trailer trailer = new Trailer(name, key);
+
+                    trailers.add(trailer);
+                }
+
+                return trailers;
+
+            } catch (Exception e){
+
+                System.out.println("exception" + e.getMessage());
+            }
+
+
+            return null;
+        }
+
+        protected List<Review> getReviews(String movieId){
+
+            try{
+
+                String reviews_url = Uri.parse(BuildConfig.ParamsBaseURL + movieId + "/reviews?").buildUpon()
+                                .appendQueryParameter(BuildConfig.APIParameter, BuildConfig.APIKEY).build().toString();
+
+                String reviews_data = getData(reviews_url);
+
+                if(reviews_data == null){
+                    return null;
+                }
+
+                JSONObject jsonObject = new JSONObject(reviews_data);
+                JSONArray itemsArray = jsonObject.getJSONArray("results");
+                List<Review> reviews = new ArrayList<Review>();
+
+                for(int i = 0; i < itemsArray.length(); i++){
+
+                    JSONObject reviewJson = itemsArray.getJSONObject(i);
+
+                    String author = reviewJson.getString("author");
+                    String content = reviewJson.getString("content");
+                    String url = reviewJson.getString("url");
+                    Review review = new Review(author, content, url);
+
+                    reviews.add(review);
+                }
+
+                return reviews;
+
+            } catch (Exception e){
+
+                System.out.println("exception" + e.getMessage());
+            }
+
+
+            return null;
+        }
+
+        protected String getData(String link){
+
+            try {
+
+                HttpURLConnection connection = null;
+
+                BufferedReader reader = null;
+
+                URL url = new URL(link);
+
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+
+                InputStream inputStream = connection.getInputStream();
+
+                if(inputStream == null){
+
+                    return null;
+                }
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                StringBuffer stringBuffer = new StringBuffer();
+                String line;
+
+                while ((line = reader.readLine()) != null){
+
+                    stringBuffer.append(line + "\n");
+                }
+
+                if(stringBuffer.length() == 0){
+                    return  null;
+                }
+
+                return stringBuffer.toString();
+
+            } catch (Exception e){
+
+            }
 
             return null;
         }
