@@ -1,7 +1,9 @@
-package com.example.mohamedbahgat.movieapp;
+package com.example.mohamedbahgat.movieapp.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.util.List;
 
 /**
  * Created by MohamedBahgat on 2016-11-29.
@@ -17,6 +19,8 @@ public class Movie implements Parcelable{
     private double popularity;
     private double rating;
 
+    private List<Trailer> trailers;
+    private List<Review> reviews;
 
     public Movie(String id, String title, String poster_path, String overview, String releaseDate, double popularity, double rating){
 
@@ -124,5 +128,21 @@ public class Movie implements Parcelable{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public List<Trailer> getTrailers() {
+        return trailers;
+    }
+
+    public void setTrailers(List<Trailer> trailers) {
+        this.trailers = trailers;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }
