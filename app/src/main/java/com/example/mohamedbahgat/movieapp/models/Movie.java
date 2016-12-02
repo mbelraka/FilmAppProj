@@ -1,8 +1,12 @@
 package com.example.mohamedbahgat.movieapp.models;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.example.mohamedbahgat.movieapp.models.Trailer;
+import com.example.mohamedbahgat.movieapp.models.Review;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +45,10 @@ public class Movie implements Parcelable{
         releaseDate = in.readString();
         popularity = in.readDouble();
         rating = in.readDouble();
+        trailers = new ArrayList<Trailer>();
+        trailers = in.readArrayList(Trailer.class.getClassLoader());
+        reviews = new ArrayList<Review>();
+        reviews = in.readArrayList(Review.class.getClassLoader());
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -120,6 +128,8 @@ public class Movie implements Parcelable{
         parcel.writeString(releaseDate);
         parcel.writeDouble(popularity);
         parcel.writeDouble(rating);
+        parcel.writeList(trailers);
+        parcel.writeList(reviews);
     }
 
     public String getId() {

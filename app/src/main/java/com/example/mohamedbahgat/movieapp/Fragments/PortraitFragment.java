@@ -1,4 +1,4 @@
-package com.example.mohamedbahgat.movieapp;
+package com.example.mohamedbahgat.movieapp.Fragments;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +14,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.mohamedbahgat.movieapp.Activities.MovieActivity;
+import com.example.mohamedbahgat.movieapp.Adapters.MovieAdapter;
+import com.example.mohamedbahgat.movieapp.BuildConfig;
+import com.example.mohamedbahgat.movieapp.R;
 import com.example.mohamedbahgat.movieapp.models.Movie;
 import com.example.mohamedbahgat.movieapp.models.Review;
 import com.example.mohamedbahgat.movieapp.models.Trailer;

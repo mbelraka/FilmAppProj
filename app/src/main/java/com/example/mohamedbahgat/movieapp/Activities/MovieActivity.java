@@ -1,10 +1,11 @@
-package com.example.mohamedbahgat.movieapp;
+package com.example.mohamedbahgat.movieapp.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
+import com.example.mohamedbahgat.movieapp.BuildConfig;
+import com.example.mohamedbahgat.movieapp.Fragments.MovieFragment;
+import com.example.mohamedbahgat.movieapp.R;
 
 /**
  * Created by MohamedBahgat on 2016-12-01.

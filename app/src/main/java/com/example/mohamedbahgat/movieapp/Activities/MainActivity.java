@@ -1,10 +1,12 @@
-package com.example.mohamedbahgat.movieapp;
+package com.example.mohamedbahgat.movieapp.Activities;
 
-import android.graphics.Movie;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
-import android.widget.GridView;
+
+import com.example.mohamedbahgat.movieapp.BuildConfig;
+import com.example.mohamedbahgat.movieapp.Fragments.PortraitFragment;
+import com.example.mohamedbahgat.movieapp.R;
 
 public class MainActivity extends AppCompatActivity {
 

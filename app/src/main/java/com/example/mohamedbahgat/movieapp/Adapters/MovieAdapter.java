@@ -1,4 +1,4 @@
-package com.example.mohamedbahgat.movieapp;
+package com.example.mohamedbahgat.movieapp.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.example.mohamedbahgat.movieapp.BuildConfig;
+import com.example.mohamedbahgat.movieapp.R;
 import com.example.mohamedbahgat.movieapp.models.Movie;
 import com.squareup.picasso.Picasso;
 import java.util.List;
