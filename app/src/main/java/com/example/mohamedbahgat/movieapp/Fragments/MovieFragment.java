@@ -25,6 +25,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import db.MovieDBHelper;
+
 /**
  * Created by MohamedBahgat on 2016-12-01.
  */
@@ -69,6 +71,15 @@ public class MovieFragment extends Fragment {
 
                 TextView movie_overview = (TextView)rootView.findViewById(R.id.overview);
                 movie_overview.setText(movie.getOverview());
+
+                ImageView movie_favourite_btn = (ImageView)rootView.findViewById(R.id.favourite_btn);
+                movie_favourite_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MovieDBHelper mdb = new MovieDBHelper(getContext());
+                        mdb.insertMovie(movie);
+                    }
+                });
 
                 if(movie.getTrailers() != null){
 

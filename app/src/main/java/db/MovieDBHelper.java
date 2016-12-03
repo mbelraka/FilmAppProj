@@ -40,8 +40,8 @@ public class MovieDBHelper extends SQLiteOpenHelper {
 
 
 
-    public MovieDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public MovieDBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
