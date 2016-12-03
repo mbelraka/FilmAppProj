@@ -12,6 +12,10 @@ public class Trailer implements Parcelable{
     private String name;
     private String link;
 
+    public Trailer(){
+
+    }
+
     public Trailer(String name, String link){
         this.name = name;
         this.link = link;

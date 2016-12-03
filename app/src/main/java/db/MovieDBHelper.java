@@ -2,6 +2,7 @@ package db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -9,6 +10,7 @@ import com.example.mohamedbahgat.movieapp.models.Movie;
 import com.example.mohamedbahgat.movieapp.models.Trailer;
 import com.example.mohamedbahgat.movieapp.models.Review;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +52,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(TRAILER_TABLE_QUERY);
         sqLiteDatabase.execSQL(REVIEW_TABLE_QUERY);
         sqLiteDatabase.endTransaction();
+        sqLiteDatabase.close();
     }
 
     @Override
@@ -67,15 +70,19 @@ public class MovieDBHelper extends SQLiteOpenHelper {
 
     public void insertMovie(Movie movie){
 
-        String insert_query = "INSERT INTO Favourite_Movies(id, title, poster_path, overview, release_date, popularity, rating) VALUES (" +
-                movie.getId() + ", " + movie.getTitle() + ", " + movie.getPoster_path() + ", " + movie.getOverview() + ", "
-                + movie.getReleaseDate() + ", " + movie.getPopularity() + ", " + movie.getRating() + ");";
-
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.beginTransaction();
-        db.execSQL(insert_query);
-        db.endTransaction();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", movie.getId());
+        contentValues.put("title", movie.getTitle());
+        contentValues.put("poster_path", movie.getPoster_path());
+        contentValues.put("overview", movie.getOverview());
+        contentValues.put("release_date", movie.getReleaseDate());
+        contentValues.put("popularity", movie.getPopularity());
+        contentValues.put("rating", movie.getRating());
+
+        db.insert("Favourite_Movies", null, contentValues);
+        db.close();
 
         String movie_id = movie.getId();
         List<Trailer> trailers = movie.getTrailers();
@@ -97,25 +104,123 @@ public class MovieDBHelper extends SQLiteOpenHelper {
 
     public void insertTrailer(String movie_id, Trailer trailer){
 
-        String insert_query = "INSERT INTO Trailers(movie_id, name, link) VALUES (" +
-                movie_id + ", " + trailer.getName() + ", " + trailer.getLink() + ");";
-
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.beginTransaction();
-        db.execSQL(insert_query);
-        db.endTransaction();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("movie_id", movie_id);
+        contentValues.put("name", trailer.getName());
+        contentValues.put("link", trailer.getLink());
+
+        db.insert("Trailers", null, contentValues);
+        db.close();
     }
 
     public void insertReview(String movie_id, Review review){
 
-        String insert_query = "INSERT INTO Trailers(movie_id, link, author, content) VALUES (" +
-                movie_id + ", " + review.getLink() + ", " + review.getAuthor() + ", " + review.getContent() +  ");";
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("movie_id", movie_id);
+        contentValues.put("link", review.getLink());
+        contentValues.put("author", review.getAuthor());
+        contentValues.put("content", review.getContent());
+
+        db.insert("Reviews", null, contentValues);
+        db.close();
+    }
+
+
+    public List<Movie> getMovies(){
+
+        List<Movie> movies = new ArrayList<Movie>();
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.beginTransaction();
-        db.execSQL(insert_query);
-        db.endTransaction();
+        Cursor cursor = db.query("Favourite_Movies",
+                new String[]{"id", "title", "poster_path", "overview", "release_date", "popularity", "rating"},
+                null, null, null, null, null);
+
+        if(cursor.moveToFirst()){
+
+            do{
+                Movie movie = new Movie();
+                movie.setId(cursor.getString(cursor.getColumnIndexOrThrow("id")));
+                movie.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
+                movie.setPoster_path(cursor.getString(cursor.getColumnIndexOrThrow("poster_path")));
+                movie.setOverview(cursor.getString(cursor.getColumnIndexOrThrow("overview")));
+                movie.setReleaseDate(cursor.getString(cursor.getColumnIndexOrThrow("release_date")));
+                movie.setPopularity(cursor.getFloat(cursor.getColumnIndexOrThrow("popularity")));
+                movie.setPopularity(cursor.getFloat(cursor.getColumnIndexOrThrow("rating")));
+                movie.setTrailers(getTrailers(movie.getId()));
+                movie.setReviews(getReviews(movie.getId()));
+
+                movies.add(movie);
+            } while(cursor.moveToNext());
+        }
+
+        db.close();
+        return movies;
+    }
+
+    public List<Trailer> getTrailers(String movie_id){
+
+        List<Trailer> trailers = new ArrayList<Trailer>();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.query("Trailers",
+                new String[]{"name", "link"},
+                "movie_id = ?", new String[]{movie_id}, null, null, null);
+
+        if(cursor.moveToFirst()){
+
+            do{
+                Trailer trailer = new Trailer();
+                trailer.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                trailer.setLink(cursor.getString(cursor.getColumnIndexOrThrow("link")));
+
+                trailers.add(trailer);
+            } while(cursor.moveToNext());
+        }
+
+        db.close();
+        return trailers;
+    }
+
+    public List<Review> getReviews(String movie_id){
+
+        List<Review> reviews = new ArrayList<Review>();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.query("Reviews",
+                new String[]{"link", "author", "content"},
+                "movie_id = ?", new String[]{movie_id}, null, null, null);
+
+        if(cursor.moveToFirst()){
+
+            do{
+                Review review = new Review();
+                review.setLink(cursor.getString(cursor.getColumnIndexOrThrow("link")));
+                review.setAuthor(cursor.getString(cursor.getColumnIndexOrThrow("author")));
+                review.setContent(cursor.getString(cursor.getColumnIndexOrThrow("content")));
+
+                reviews.add(review);
+            } while(cursor.moveToNext());
+        }
+
+        db.close();
+        return reviews;
+    }
+
+    public void deleteMovie(String movie_id){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("Favourite_Movies", "id = ?", new String[]{movie_id});
+        db.delete("Trailers", "movie_id = ?", new String[]{movie_id});
+        db.delete("Reviews", "movie_id = ?", new String[]{movie_id});
+
+        db.close();
+
     }
 }
