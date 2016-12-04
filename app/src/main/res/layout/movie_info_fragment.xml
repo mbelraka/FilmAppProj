@@ -32,7 +32,7 @@
             <ImageView
                 android:id="@+id/poster"
                 android:layout_width="146dp"
-                android:layout_height="198dp"
+                android:layout_height="200dp"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center_horizontal"
                 app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
@@ -58,7 +58,7 @@
                     android:layout_marginBottom="10dp" />
 
                 <TextView
-                    android:text="TextView"
+                    android:text="NA mins"
                     android:textStyle="bold|italic"
                     android:textSize="12dp"
                     android:gravity="center"
@@ -143,7 +143,6 @@
             android:textSize="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:gravity="center"
             android:id="@+id/reviews_header"
             android:layout_above="@+id/favourite_btn"
@@ -151,11 +150,13 @@
             android:layout_alignEnd="@+id/favourite_btn"
             android:layout_marginLeft="11dp" />
 
-        <ListView
+        <LinearLayout
             android:id="@+id/reviews_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </ListView>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="4dp">
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
