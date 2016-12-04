@@ -1,10 +1,13 @@
 package com.example.mohamedbahgat.movieapp.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.mohamedbahgat.movieapp.Activities.MainActivity;
 import com.example.mohamedbahgat.movieapp.Activities.MovieActivity;
 import com.example.mohamedbahgat.movieapp.Adapters.MovieAdapter;
 import com.example.mohamedbahgat.movieapp.BuildConfig;
@@ -40,6 +44,8 @@ import db.MovieDBHelper;
 
 public class PortraitFragment extends Fragment {
 
+    final String LOG_TAG = "PortraitFragment";
+
     private MovieAdapter movieAdapter;
     private GridView gridView;
     private boolean different_content;
@@ -63,16 +69,26 @@ public class PortraitFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        SharedPreferences sharedPreferences = this.getContext().getSharedPreferences(BuildConfig.BaseTitle, Context.MODE_PRIVATE);
+
         int id = item.getItemId();
 
         if(id == R.id.popularity_option){
             different_content = true;
-            new FetchMoviesTask().execute(BuildConfig.PopularityParameter, "1");
+            String filter = BuildConfig.PopularityParameter;
+            if(sharedPreferences != null){
+                sharedPreferences.edit().putString("filter", filter);
+            }
+            new FetchMoviesTask().execute(filter, "1");
             return true;
         }
         else if(id == R.id.rating_option){
             different_content = true;
-            new FetchMoviesTask().execute(BuildConfig.RateParameter, "1");
+            String filter = BuildConfig.RateParameter;
+            if(sharedPreferences != null){
+                sharedPreferences.edit().putString("filter", filter);
+            }
+            new FetchMoviesTask().execute(filter, "1");
             return true;
         }
         else if(id == R.id.favourite_option){
@@ -96,15 +112,9 @@ public class PortraitFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try{
                     Movie movie = movieAdapter.getMovies().get(i);
-                    Intent intent = new Intent(getActivity(), MovieActivity.class);
-                    intent.putExtra(Intent.EXTRA_TITLE, movie.getTitle());
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("movie", movie);
-                    intent.putExtra("movie", bundle);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                    startActivity(intent);
+                    ((MainActivity)getActivity()).LaunchMovie(movie);
                 }catch (Exception e){
-                    System.out.println("exception in listener" + e.getMessage());
+                    Log.e(LOG_TAG, ": Listener item click listener - ", e);
                 }
             }
         });
@@ -112,9 +122,17 @@ public class PortraitFragment extends Fragment {
         if(!different_content){
 
             movieAdapter = new MovieAdapter(this.getContext());
-            FetchMoviesTask fetchTask = new FetchMoviesTask();
-            fetchTask.execute(BuildConfig.PopularityParameter, "1");
+            String filter = BuildConfig.PopularityParameter;
 
+            SharedPreferences sharedPreferences = this.getContext().getSharedPreferences(BuildConfig.BaseTitle, Context.MODE_PRIVATE);
+            if(sharedPreferences !=  null){
+
+                String pref_filter = sharedPreferences.getString("filter", null);
+                filter = (pref_filter == null)? filter : pref_filter;
+            }
+
+            FetchMoviesTask fetchTask = new FetchMoviesTask();
+            fetchTask.execute(filter, "1");
             gridView.setAdapter(movieAdapter);
         }
 
@@ -142,8 +160,7 @@ public class PortraitFragment extends Fragment {
 
             } catch(Exception e){
 
-                System.out.println("exception" + e.getMessage());
-
+                Log.e(LOG_TAG, ": FetchMoviesTask - ", e);
             }
 
             return null;
@@ -180,7 +197,7 @@ public class PortraitFragment extends Fragment {
 
             } catch (Exception e){
 
-                System.out.println("exception" + e.getMessage());
+                Log.e(LOG_TAG, ": getDataFromJSON - ", e);
             }
 
 
@@ -227,7 +244,7 @@ public class PortraitFragment extends Fragment {
 
             } catch (Exception e){
 
-                System.out.println("exception" + e.getMessage());
+                Log.e(LOG_TAG, ": getTrailers - ", e);
             }
 
 
@@ -267,7 +284,7 @@ public class PortraitFragment extends Fragment {
 
             } catch (Exception e){
 
-                System.out.println("exception" + e.getMessage());
+                Log.e(LOG_TAG, ": getReviews - ", e);
             }
 
 
@@ -313,6 +330,7 @@ public class PortraitFragment extends Fragment {
 
             } catch (Exception e){
 
+                Log.e(LOG_TAG, ": getData - ", e);
             }
 
             return null;
@@ -325,12 +343,12 @@ public class PortraitFragment extends Fragment {
                 Uri builder = Uri.parse(BuildConfig.URL).buildUpon().appendPath(param).
                         appendQueryParameter(BuildConfig.APIParameter, BuildConfig.APIKEY).build();
 
-                System.out.println(builder.toString());
 
                 return builder.toString();
 
             } catch (Exception e){
 
+                Log.e(LOG_TAG, ": generateURL - ", e);
             }
 
             return null;

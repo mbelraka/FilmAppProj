@@ -6,15 +6,15 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.mohamedbahgat.movieapp.BuildConfig;
@@ -34,6 +34,10 @@ import db.MovieDBHelper;
 
 public class MovieFragment extends Fragment {
 
+    final String LOG_TAG = "MovieFragment";
+
+    private Movie movie;
+
     public MovieFragment(){
 
     }
@@ -49,34 +53,39 @@ public class MovieFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.movie_info_fragment, container, false);
+        View rootView = new View(getContext());
 
-        Intent intent = this.getActivity().getIntent();
+            if(getMovie() == null){
 
-        if(intent != null && intent.getExtras() != null){
+                Intent intent = this.getActivity().getIntent();
+                if(intent != null && intent.getExtras() != null) {
 
-            Bundle bundle = intent.getBundleExtra("movie");
-            final Movie movie = bundle.getParcelable("movie");
+                    Bundle bundle = intent.getBundleExtra("movie");
+                    this.movie = bundle.getParcelable("movie");
+                }
+            }
 
-            if(movie != null){
+            if(getMovie() != null){
+
+                rootView = inflater.inflate(R.layout.movie_info_fragment, container, false);
 
                 TextView movie_title = (TextView)rootView.findViewById(R.id.movie_info_title);
-                movie_title.setText(movie.getTitle());
+                movie_title.setText(getMovie().getTitle());
 
                 ImageView movie_poster = (ImageView)rootView.findViewById(R.id.poster);
-                Picasso.with(this.getContext()).load(BuildConfig.imageURL + movie.getPoster_path()).into(movie_poster);
+                Picasso.with(this.getContext()).load(BuildConfig.imageURL + getMovie().getPoster_path()).into(movie_poster);
 
                 TextView movie_release_date = (TextView)rootView.findViewById(R.id.release_year);
-                movie_release_date.setText(movie.getReleaseDate());
+                movie_release_date.setText(getMovie().getReleaseDate());
 
                 TextView movie_rating = (TextView)rootView.findViewById(R.id.rating);
-                movie_rating.setText(movie.getRatingString());
+                movie_rating.setText(getMovie().getRatingString());
 
                 TextView movie_overview = (TextView)rootView.findViewById(R.id.overview);
-                movie_overview.setText(movie.getOverview());
+                movie_overview.setText(getMovie().getOverview());
 
                 final ImageView movie_favourite_btn = (ImageView)rootView.findViewById(R.id.favourite_btn);
-                if(movie.isFavourite()){
+                if(getMovie().isFavourite()){
                     movie_favourite_btn.setImageResource(android.R.drawable.btn_star_big_on);
                 }else{
                     movie_favourite_btn.setImageResource(android.R.drawable.btn_star_big_off);
@@ -86,41 +95,92 @@ public class MovieFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         MovieDBHelper mdb = new MovieDBHelper(getContext());
-                        if(movie.isFavourite()){
+                        if(getMovie().isFavourite()){
                             movie_favourite_btn.setImageResource(android.R.drawable.btn_star_big_off);
-                            mdb.deleteMovie(movie.getId());
+                            mdb.deleteMovie(getMovie().getId());
                         }else{
                             movie_favourite_btn.setImageResource(android.R.drawable.btn_star_big_on);
-                            mdb.insertMovie(movie);
+                            mdb.insertMovie(getMovie());
                         }
-                        movie.setFavourite(!(movie.isFavourite()));
+                        getMovie().setFavourite(!(getMovie().isFavourite()));
                     }
                 });
 
-                if(movie.getTrailers() != null){
+                if(getMovie().getTrailers() != null){
 
                     ExpandableListView trailers_list = (ExpandableListView) rootView.findViewById(R.id.trailers_list);
                     TrailerAdapter trailerAdapter = new TrailerAdapter(this.getContext());
                     trailers_list.setAdapter(trailerAdapter);
-                    trailerAdapter.setTrailers(movie.getTrailers());
+                    trailerAdapter.setTrailers(getMovie().getTrailers());
                 }
 
-                if(movie.getReviews() != null){
+                if(getMovie().getReviews() != null){
 
-                    ListView reviews_list = (ListView) rootView.findViewById(R.id.reviews_list);
-                    ReviewAdapter reviewAdapter = new ReviewAdapter(this.getContext());
-                    reviews_list.setAdapter(reviewAdapter);
-                    reviewAdapter.setReviews(movie.getReviews());
+                    LinearLayout reviews_list = (LinearLayout) rootView.findViewById(R.id.reviews_list);
+
+                    List<Review> reviews = getMovie().getReviews();
+
+                    for(Review review: reviews){
+
+                        View view  = getReviewView(review);
+                        if(view != null){
+                            reviews_list.addView(view);
+                        }
+                    }
                 }
 
             }
+            else{
 
-        }
+                rootView = inflater.inflate(R.layout.empty_view_layout, container, false);
+            }
 
         return rootView;
     }
 
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
+
+    public View getReviewView(Review review){
+
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View view = inflater.inflate(R.layout.review_item_layout, null);
+
+            TextView review_url_body = (TextView) view.findViewById(R.id.review_url_body);
+            final String review_url_string = review.getLink();
+            review_url_body.setText(review_url_string);
+
+            TextView review_author_body = (TextView) view.findViewById(R.id.review_author_body);
+            review_author_body.setText(review.getAuthor());
+
+            TextView review_content_body = (TextView) view.findViewById(R.id.review_content_body);
+            review_content_body.setText(review.getContent());
+
+            review_url_body.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+
+                    try{
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(review_url_string)));
+                    }
+                    catch (Exception e){
+
+                        Log.e(LOG_TAG, ": getReviewView - ", e);
+                    }
+                }
+            });
+
+            return view;
+    }
+
     public class TrailerAdapter implements ExpandableListAdapter {
+
+        final String LOG_TAG = "TrailerAdapter";
 
         private Context context;
         private List<Trailer> trailers;
@@ -216,6 +276,7 @@ public class MovieFragment extends Fragment {
                     }
                     catch (Exception e){
 
+                        Log.e(LOG_TAG, ": getChildView - ", e);
                     }
                 }
             });
@@ -276,6 +337,8 @@ public class MovieFragment extends Fragment {
     }
 
     public class ReviewAdapter implements ListAdapter {
+
+        final String LOG_TAG = "ReviewAdapter";
 
         private Context context;
         private List<Review> reviews;
@@ -358,6 +421,7 @@ public class MovieFragment extends Fragment {
                     }
                     catch (Exception e){
 
+                        Log.e(LOG_TAG, ": getView - ", e);
                     }
                 }
             });
