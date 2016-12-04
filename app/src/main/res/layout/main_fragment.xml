@@ -14,9 +14,8 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:numColumns="auto_fit"
+            android:numColumns="2"
             android:listSelector="@null"
-            android:columnWidth="100dp"
             android:fadingEdgeLength="0dp"
             />
 
