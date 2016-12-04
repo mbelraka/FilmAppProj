@@ -13,20 +13,14 @@ import com.example.mohamedbahgat.movieapp.R;
 
 public class MovieActivity extends AppCompatActivity {
 
+    final String LOG_TAG = "MovieActivity";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
         setTitle(BuildConfig.BaseTitle + " - movie info");
-
-        /*Intent intent = this.getIntent();
-
-        if(intent != null && intent.hasExtra(Intent.EXTRA_TITLE)){
-
-            String title = intent.getStringExtra(Intent.EXTRA_TITLE);
-            setTitle(title);
-        }*/
 
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().add(R.id.movie_info_container, new MovieFragment()).commit();

@@ -1,6 +1,7 @@
 package com.example.mohamedbahgat.movieapp.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import java.util.List;
  */
 
 public class MovieAdapter extends BaseAdapter {
+
+    final String LOG_TAG = "MovieAdapter";
 
     private Context context;
     private List<Movie> movies;
