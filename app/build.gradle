@@ -20,13 +20,13 @@ android {
         buildTypes.each {
 
             it.buildConfigField 'String','BaseTitle', '"MovieApp"'
-            it.buildConfigField 'String','URL', '"http://api.themoviedb.org/3/discover/movie?"'
+            it.buildConfigField 'String','URL', '"http://api.themoviedb.org/3/movie"'
             it.buildConfigField 'String','imageURL', '"http://image.tmdb.org/t/p/w185"'
             it.buildConfigField 'String','trailerBaseURL', '"https://www.youtube.com/watch?"'
             it.buildConfigField 'String','ParamsBaseURL', '"http://api.themoviedb.org/3/movie/"'
             it.buildConfigField 'String','SortByParameter', '"sort_by"'
-            it.buildConfigField 'String','PopularityParameter', '"popularity.desc"'
-            it.buildConfigField 'String','RateParameter', '"vote_average.desc"'
+            it.buildConfigField 'String','PopularityParameter', '"popular"'
+            it.buildConfigField 'String','RateParameter', '"top_rated"'
             it.buildConfigField 'String','APIParameter', '"api_key"'
             it.buildConfigField 'String','APIKEY', '"bc9067a23b0bbc9dc1f7a69186d053d9"'
         }
