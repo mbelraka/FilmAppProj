@@ -22,6 +22,7 @@ public class Movie implements Parcelable{
     private String releaseDate;
     private double popularity;
     private double rating;
+    private boolean favourite;
 
     private List<Trailer> trailers;
     private List<Review> reviews;
@@ -39,6 +40,7 @@ public class Movie implements Parcelable{
         this.releaseDate = releaseDate;
         this.popularity = popularity;
         this.rating = rating;
+        this.favourite = false;
     }
 
     protected Movie(Parcel in) {
@@ -49,10 +51,9 @@ public class Movie implements Parcelable{
         releaseDate = in.readString();
         popularity = in.readDouble();
         rating = in.readDouble();
-        trailers = new ArrayList<Trailer>();
-        trailers = in.readArrayList(Trailer.class.getClassLoader());
-        reviews = new ArrayList<Review>();
-        reviews = in.readArrayList(Review.class.getClassLoader());
+        favourite = in.readByte() != 0;
+        trailers = in.createTypedArrayList(Trailer.CREATOR);
+        reviews = in.createTypedArrayList(Review.CREATOR);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -132,8 +133,9 @@ public class Movie implements Parcelable{
         parcel.writeString(releaseDate);
         parcel.writeDouble(popularity);
         parcel.writeDouble(rating);
-        parcel.writeList(trailers);
-        parcel.writeList(reviews);
+        parcel.writeByte((byte) (favourite ? 1 : 0));
+        parcel.writeTypedList(trailers);
+        parcel.writeTypedList(reviews);
     }
 
     public String getId() {
@@ -158,5 +160,13 @@ public class Movie implements Parcelable{
 
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
+    }
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
     }
 }

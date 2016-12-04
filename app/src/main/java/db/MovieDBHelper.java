@@ -19,7 +19,7 @@ import java.util.List;
 
 public class MovieDBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     static final String DATABASE_NAME = "MovieApp.db";
 
@@ -47,22 +47,21 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        sqLiteDatabase.beginTransaction();
+       // sqLiteDatabase.beginTransaction();
         sqLiteDatabase.execSQL(MOVIE_TABLE_QUERY);
         sqLiteDatabase.execSQL(TRAILER_TABLE_QUERY);
         sqLiteDatabase.execSQL(REVIEW_TABLE_QUERY);
-        sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
+    //    sqLiteDatabase.endTransaction();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
-        sqLiteDatabase.beginTransaction();
+      //  sqLiteDatabase.beginTransaction();
         sqLiteDatabase.execSQL(MOVIE_TABLE_DROP_QUERY);
         sqLiteDatabase.execSQL(TRAILER_TABLE_DROP_QUERY);
         sqLiteDatabase.execSQL(REVIEW_TABLE_DROP_QUERY);
-        sqLiteDatabase.endTransaction();
+        //sqLiteDatabase.endTransaction();
 
         onCreate(sqLiteDatabase);
 
@@ -70,7 +69,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
 
     public void insertMovie(Movie movie){
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put("id", movie.getId());
@@ -82,7 +81,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         contentValues.put("rating", movie.getRating());
 
         db.insert("Favourite_Movies", null, contentValues);
-        db.close();
+       //db.close();
 
         String movie_id = movie.getId();
         List<Trailer> trailers = movie.getTrailers();
@@ -112,7 +111,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         contentValues.put("link", trailer.getLink());
 
         db.insert("Trailers", null, contentValues);
-        db.close();
+        //db.close();
     }
 
     public void insertReview(String movie_id, Review review){
@@ -126,7 +125,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         contentValues.put("content", review.getContent());
 
         db.insert("Reviews", null, contentValues);
-        db.close();
+        //db.close();
     }
 
 
@@ -150,7 +149,8 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 movie.setOverview(cursor.getString(cursor.getColumnIndexOrThrow("overview")));
                 movie.setReleaseDate(cursor.getString(cursor.getColumnIndexOrThrow("release_date")));
                 movie.setPopularity(cursor.getFloat(cursor.getColumnIndexOrThrow("popularity")));
-                movie.setPopularity(cursor.getFloat(cursor.getColumnIndexOrThrow("rating")));
+                movie.setRating(cursor.getFloat(cursor.getColumnIndexOrThrow("rating")));
+                movie.setFavourite(true);
                 movie.setTrailers(getTrailers(movie.getId()));
                 movie.setReviews(getReviews(movie.getId()));
 
@@ -158,7 +158,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
-        db.close();
+        //db.close();
         return movies;
     }
 
@@ -183,7 +183,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
-        db.close();
+        //db.close();
         return trailers;
     }
 
@@ -209,7 +209,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
-        db.close();
+        //db.close();
         return reviews;
     }
 
@@ -220,7 +220,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         db.delete("Trailers", "movie_id = ?", new String[]{movie_id});
         db.delete("Reviews", "movie_id = ?", new String[]{movie_id});
 
-        db.close();
+        //db.close();
 
     }
 }

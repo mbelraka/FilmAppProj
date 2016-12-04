@@ -32,6 +32,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import db.MovieDBHelper;
+
 /**
  * Created by MohamedBahgat on 2016-11-25.
  */
@@ -40,6 +42,7 @@ public class PortraitFragment extends Fragment {
 
     private MovieAdapter movieAdapter;
     private GridView gridView;
+    private boolean different_content;
 
     public PortraitFragment(){
 
@@ -63,11 +66,20 @@ public class PortraitFragment extends Fragment {
         int id = item.getItemId();
 
         if(id == R.id.popularity_option){
+            different_content = true;
             new FetchMoviesTask().execute(BuildConfig.PopularityParameter, "1");
             return true;
         }
         else if(id == R.id.rating_option){
+            different_content = true;
             new FetchMoviesTask().execute(BuildConfig.RateParameter, "1");
+            return true;
+        }
+        else if(id == R.id.favourite_option){
+            different_content = true;
+            MovieDBHelper mdb = new MovieDBHelper(this.getContext());
+            movieAdapter.setMovies(mdb.getMovies());
+            movieAdapter.notifyDataSetChanged();
             return true;
         }
 
@@ -97,12 +109,14 @@ public class PortraitFragment extends Fragment {
             }
         });
 
-        movieAdapter = new MovieAdapter(this.getContext());
+        if(!different_content){
 
-        FetchMoviesTask fetchTask = new FetchMoviesTask();
-        fetchTask.execute(BuildConfig.PopularityParameter, "1");
+            movieAdapter = new MovieAdapter(this.getContext());
+            FetchMoviesTask fetchTask = new FetchMoviesTask();
+            fetchTask.execute(BuildConfig.PopularityParameter, "1");
 
-        gridView.setAdapter(movieAdapter);
+            gridView.setAdapter(movieAdapter);
+        }
 
         return rootView;
     }
@@ -308,9 +322,10 @@ public class PortraitFragment extends Fragment {
 
             try{
 
-                Uri builder = Uri.parse(BuildConfig.URL).buildUpon().
-                        appendQueryParameter(BuildConfig.SortByParameter, param).
+                Uri builder = Uri.parse(BuildConfig.URL).buildUpon().appendPath(param).
                         appendQueryParameter(BuildConfig.APIParameter, BuildConfig.APIKEY).build();
+
+                System.out.println(builder.toString());
 
                 return builder.toString();
 

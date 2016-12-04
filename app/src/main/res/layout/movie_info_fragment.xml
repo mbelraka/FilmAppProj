@@ -87,7 +87,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    app:srcCompat="@android:drawable/btn_star_big_off"
+                    android:src="@android:drawable/btn_star_big_off"
                     android:id="@+id/favourite_btn"
                     android:layout_alignBottom="@+id/poster"
                     android:layout_alignStart="@+id/run_time"

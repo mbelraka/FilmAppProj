@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
@@ -43,6 +44,8 @@ public class MovieFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -53,7 +56,7 @@ public class MovieFragment extends Fragment {
         if(intent != null && intent.getExtras() != null){
 
             Bundle bundle = intent.getBundleExtra("movie");
-            Movie movie = bundle.getParcelable("movie");
+            final Movie movie = bundle.getParcelable("movie");
 
             if(movie != null){
 
@@ -72,12 +75,25 @@ public class MovieFragment extends Fragment {
                 TextView movie_overview = (TextView)rootView.findViewById(R.id.overview);
                 movie_overview.setText(movie.getOverview());
 
-                ImageView movie_favourite_btn = (ImageView)rootView.findViewById(R.id.favourite_btn);
+                final ImageView movie_favourite_btn = (ImageView)rootView.findViewById(R.id.favourite_btn);
+                if(movie.isFavourite()){
+                    movie_favourite_btn.setImageResource(android.R.drawable.btn_star_big_on);
+                }else{
+                    movie_favourite_btn.setImageResource(android.R.drawable.btn_star_big_off);
+                }
+
                 movie_favourite_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         MovieDBHelper mdb = new MovieDBHelper(getContext());
-                        mdb.insertMovie(movie);
+                        if(movie.isFavourite()){
+                            movie_favourite_btn.setImageResource(android.R.drawable.btn_star_big_off);
+                            mdb.deleteMovie(movie.getId());
+                        }else{
+                            movie_favourite_btn.setImageResource(android.R.drawable.btn_star_big_on);
+                            mdb.insertMovie(movie);
+                        }
+                        movie.setFavourite(!(movie.isFavourite()));
                     }
                 });
 
