@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/popularity_option"
-        android:title="popularity"
+        android:title="Popularity"
         app:showAsAction = "never" >
     </item>
 
     <item
         android:id="@+id/rating_option"
-        android:title="rating"
+        android:title="Rating"
         app:showAsAction = "never" >
     </item>
 
     <item
         android:id="@+id/favourite_option"
-        android:title="favourites"
+        android:title="Favourites"
         app:showAsAction = "never" >
     </item>
 

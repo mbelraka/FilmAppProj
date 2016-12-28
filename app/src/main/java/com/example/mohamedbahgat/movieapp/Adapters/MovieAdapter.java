@@ -1,6 +1,7 @@
 package com.example.mohamedbahgat.movieapp.Adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,7 @@ public class MovieAdapter extends BaseAdapter {
         ImageView movie_poster = (ImageView)view.findViewById(R.id.movie_poster);
         //TextView movie_title = (TextView)view.findViewById(R.id.movie_title);
         //ImageView favourite_btn = (ImageView)view.findViewById(R.id.favourite_btn);
-        Picasso.with(context).load(BuildConfig.imageURL + movie.getPoster_path()).into(movie_poster);
+        Picasso.with(context).load(BuildConfig.imageURL + movie.getPoster_path()).placeholder(R.mipmap.ic_loading_image).error(context.getResources().getIdentifier("ic_menu_close_clear_cancel", "drawable", "android")).into(movie_poster);
 
         //movie_title.setText(movie.getTitle());
 
